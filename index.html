@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>fetch-img-from-cache</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        #images {
+            margin-top: 1em;
+        }
+
+        #images img {
+            max-width: 30vw;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Don't hit the server twice!</h1>
+    </header>
+    <main>
+        <div id="images">
+            <img id="samplePhoto" src="assets/340_AppleiPhoneXSMax_IMG_E7156.jpg">
+        </div>
+    </main>
+    <script type="text/javascript">
+        let query = document.querySelector.bind(document);
+        query('#samplePhoto').addEventListener('load', fetchImgFromCache);
+
+        function fetchImgFromCache(e) {
+            const img = e.target;
+            console.log(img.complete ? 'complete' : 'not complete');
+
+            fetch(e.target.src)
+                .then(validateResponse)
+                .then(readResponseAsBlob)
+                .then(showImage)
+                .catch(logError);
+        }
+
+        function logResult(result) {
+            console.log(result);
+        }
+
+        function logError(error) {
+            console.log('Looks like there was a problem: \n', error);
+        }
+
+        function validateResponse(response) {
+            if (!response.ok) {
+                throw Error(response.statusText);
+            }
+            return response;
+        }
+
+        function readResponseAsBlob(response) {
+            return response.blob();
+        }
+
+        function showImage(responseAsBlob) {
+            // Assuming the DOM has a div with id 'container'
+            var images = query('#images');
+            var imgElem = document.createElement('img');
+            images.appendChild(imgElem);
+            var imgUrl = URL.createObjectURL(responseAsBlob);
+            imgElem.src = imgUrl;
+        }
+
+        function fetchImage(pathToResource) {
+            fetch(pathToResource)
+                .then(validateResponse)
+                .then(readResponseAsBlob)
+                .then(showImage)
+                .catch(logError);
+        }
+    </script>
+
+</body>
+
+</html>
