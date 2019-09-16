@@ -6,10 +6,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
     <style>
-        #images {
-            margin-top: 1em;
-        }
-
         #images img {
             max-width: 30vw;
         }
@@ -18,7 +14,7 @@
 
 <body>
     <header>
-        <h1>Don't hit the server twice!</h1>
+        <h1>Load the second image from browser cache.</h1>
     </header>
     <main>
         <div id="images">
@@ -27,11 +23,12 @@
     </main>
     <script type="text/javascript">
         let query = document.querySelector.bind(document);
+
         query('#samplePhoto').addEventListener('load', fetchImgFromCache);
 
         function fetchImgFromCache(e) {
             const img = e.target;
-            console.log(img.complete ? 'complete' : 'not complete');
+            console.log(img, img.complete ? 'complete' : 'not complete');
 
             fetch(e.target.src)
                 .then(validateResponse)
@@ -60,20 +57,11 @@
         }
 
         function showImage(responseAsBlob) {
-            // Assuming the DOM has a div with id 'container'
             var images = query('#images');
             var imgElem = document.createElement('img');
             images.appendChild(imgElem);
             var imgUrl = URL.createObjectURL(responseAsBlob);
             imgElem.src = imgUrl;
-        }
-
-        function fetchImage(pathToResource) {
-            fetch(pathToResource)
-                .then(validateResponse)
-                .then(readResponseAsBlob)
-                .then(showImage)
-                .catch(logError);
         }
     </script>
 
